@@ -16,7 +16,21 @@ We select the Standard queue and the queue name
 
 ![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/7fe1b599-8a0d-4137-a9a5-68aa378ccbcc)
 
-We 
+For this example we leave the rest of the default values and press the Create queue button
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/03c1fb15-6ce9-4fff-8209-a06e85ac8941)
+
+We get this confirmation message after the queue was created
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/1fff7db5-2eb3-46c1-9d66-d5c4414b016a)
+
+Now we press the **Subscribe to Amazon SNS Topic** button and we select the topic 
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/54e82b98-a735-473c-9e0e-f5039c93359d)
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/e549c39e-f555-48e9-916d-c2e9dc566b3b)
+
+
 
 ## 2. Create a .NET8 WebAPI with VSCode
 
