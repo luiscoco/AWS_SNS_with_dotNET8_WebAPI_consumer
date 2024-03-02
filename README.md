@@ -30,7 +30,7 @@ Now we press the **Subscribe to Amazon SNS Topic** button and we select the topi
 
 ![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/e549c39e-f555-48e9-916d-c2e9dc566b3b)
 
-
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/93035b82-f8c1-44fa-ae83-1bb6d13aca20)
 
 ## 2. Create a .NET8 WebAPI with VSCode
 
