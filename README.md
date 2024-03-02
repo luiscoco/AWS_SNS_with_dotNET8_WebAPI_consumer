@@ -4,7 +4,19 @@ See the source code for this sample in this github repo: https://github.com/luis
 
 ## 1. Create AWS SQS subscribed to SNS(topic)
 
+We navigate to SQS service in AWS Console
 
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/a992bf86-adc7-4b91-a39c-381eeaa09913)
+
+And we create a new SQS
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/7a1f863b-6bdd-45c9-9db1-91f10d761495)
+
+We select the Standard queue and the queue name
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/7fe1b599-8a0d-4137-a9a5-68aa378ccbcc)
+
+We 
 
 ## 2. Create a .NET8 WebAPI with VSCode
 
