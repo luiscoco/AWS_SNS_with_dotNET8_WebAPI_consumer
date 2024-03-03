@@ -233,12 +233,6 @@ After executing the above request we get this response
 
 ## 8. Creating a Hosted Service for continously processing the messages
 
-**IMPORTANT NOTE**: for running the HostedService please configure the AWS CLI running this command, and set the **aws_access_key_id** and the **aws_secret_access_key**
-
-```
-aws configure
-```
-
 In the context of AWS SNS (Simple Notification Service) and SQS (Simple Queue Service), there's no direct "start message processing" mechanism similar to what you might use with Azure Service Bus,
 
 where a background process continuously pulls messages from a queue or subscription
@@ -380,4 +374,16 @@ When we test the application we verify the output for the background hostedservi
 
 ![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/030bca0a-fee4-408f-a843-90aece759056)
 
+**IMPORTANT NOTE**: for running the HostedService please configure the AWS CLI running this command, and set the **aws_access_key_id** and the **aws_secret_access_key**
 
+```
+aws configure
+```
+
+**IMPORTANT NOTE**: also is very important to set the **Visibility timeout** to 1 second
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/83401435-0f8c-4881-b637-83433bb5db86)
+
+**Visibility timeout**: when a message is received, SQS temporarily hides it from subsequent retrieve requests for a duration known as the visibility timeout
+
+If you're not deleting messages after processing, ensure the visibility timeout is appropriately set for your use case to prevent immediate reprocessing by other consumers
