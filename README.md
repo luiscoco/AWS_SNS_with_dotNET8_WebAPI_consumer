@@ -231,4 +231,153 @@ After executing the above request we get this response
 
 ![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/f01d1738-765c-4fc4-a8a2-ccb51081bc0f)
 
+## 8. Creating a Hosted Service for continously processing the messages
+
+**IMPORTANT NOTE**: for running the HostedService please configure the AWS CLI running this command, and set the **aws_access_key_id** and the **aws_secret_access_key**
+
+```
+aws configure
+```
+
+In the context of AWS SNS (Simple Notification Service) and SQS (Simple Queue Service), there's no direct "start message processing" mechanism similar to what you might use with Azure Service Bus,
+
+where a background process continuously pulls messages from a queue or subscription
+
+Instead, message consumption from an SQS queue is typically done by polling the queue to retrieve messages
+
+However, you can simulate a continuous processing mechanism in your application by creating a background service in your .NET application that polls the SQS queue for messages at regular intervals
+
+This can be achieved using .NET's IHostedService interface, which allows you to run background tasks in a web application
+
+We can create a new file **SqsMessageProcessor.cs** for defining the messages HostedService processor
+
+**SqsMessageProcessor.cs**
+
+```csharp
+using Amazon.SQS;
+using Amazon.SQS.Model;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class SqsMessageProcessor : IHostedService, IDisposable
+{
+    private Timer? _timer; // Make timer nullable
+    private readonly AmazonSQSClient _sqsClient;
+    private readonly string _queueUrl = "https://sqs.eu-west-3.amazonaws.com/954718177936/myqueue";
+
+    public SqsMessageProcessor()
+    {
+        Console.WriteLine("Initializing AmazonSQSClient with Region: EUWest3");
+        try
+        {
+            _sqsClient = new AmazonSQSClient(Amazon.RegionEndpoint.EUWest3);
+            Console.WriteLine("AmazonSQSClient initialization successful.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error initializing AmazonSQSClient: {ex.Message}");
+            throw;
+        }
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        // Poll every 1 second (adjust as necessary)
+        _timer = new Timer(async _ => await DoWork(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+        return Task.CompletedTask;
+    }
+
+    private async Task DoWork()
+    {
+        var receiveMessageRequest = new ReceiveMessageRequest
+        {
+            QueueUrl = _queueUrl,
+            MaxNumberOfMessages = 10 // Adjust based on your needs
+        };
+
+        try
+        {
+            var response = await _sqsClient.ReceiveMessageAsync(receiveMessageRequest);
+            foreach (var message in response.Messages)
+            {
+                Console.WriteLine($"Received message: {message.Body}");
+
+                // var deleteMessageRequest = new DeleteMessageRequest
+                // {
+                //     QueueUrl = _queueUrl,
+                //     ReceiptHandle = message.ReceiptHandle
+                // };
+                // await _sqsClient.DeleteMessageAsync(deleteMessageRequest);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            // Handle exception (e.g., log the error)
+        }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}
+```
+
+We also have to modify the application middleware for registering the background service
+
+**Program.cs**
+
+```csharp
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.OpenApi.Models;
+using ServiceBusReceiverApi.Controllers;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddHostedService<SqsMessageProcessor>(); // Register the background service
+
+// Add Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServiceBusReceiverApi", Version = "v1" });
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ServiceBusReceiverApi v1");
+});
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+```
+
+This is the final project structure
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/585654be-3967-48e5-b61d-935b9d6bc43e)
+
+When we test the application we verify the output for the background hostedservice
+
+![image](https://github.com/luiscoco/AWS_SNS_with_dotNET8_WebAPI_consumer/assets/32194879/030bca0a-fee4-408f-a843-90aece759056)
+
 
